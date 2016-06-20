@@ -9,19 +9,29 @@ public class Curve{
     DraggablePoint a,b,ca,cb;
     PApplet p;
 
+    float vT;
+
     float t;
     Point mid;
     boolean isStopped;
 
 
     public Curve(PApplet _p, Point _a){
+
+        vT = (float)Math.random()*0.0025f+0.001f;
         isStopped = false;
         t = 0.0f;
         p = _p;
 
+        if(_a.z != 0.0f){
+            ca = new DraggablePoint(_a.x + (float)Math.cos(_a.z)*100.0f, _a.y + (float)Math.sin(_a.z)*100.0f,p);
+        } else {
+            ca = new DraggablePoint((float)Math.random()*(float)p.width,(float)Math.random()*(float)p.height,p);
+
+        }
+
         a = new DraggablePoint(_a.x,_a.y,p);
         b = new DraggablePoint((float)Math.random()*(float)p.width,(float)Math.random()*(float)p.height,p);
-        ca = new DraggablePoint((float)Math.random()*(float)p.width,(float)Math.random()*(float)p.height,p);
         cb = new DraggablePoint((float)Math.random()*(float)p.width,(float)Math.random()*(float)p.height,p);
 
         mid = new Point(a.x,a.y);
@@ -31,9 +41,12 @@ public class Curve{
     }
     public void update(float _tinc){
         if(!isStopped) {
-            t += _tinc;
+            //t += _tinc;
+            t += vT;
             if (t > 1.0f) {
-                t = 0.0f;
+                t = 1.0f;
+                this.stop();
+                //t = 0.0f;
             }
             mid = plot(t);
         }
@@ -63,14 +76,14 @@ public class Curve{
         float  px_dt = (B0_dt * a.x) + (B1_dt * ca.x) + (B2_dt * cb.x) + (B3_dt * b.x);
         float py_dt = (B0_dt * a.y) + (B1_dt * ca.y) + (B2_dt * cb.y) + (B3_dt * b.y);
         float slope = (float)Math.atan2(py_dt,px_dt);
-//println(slope);
 
-        Point returnVal = new Point(0,0);
+
+        Point returnVal = new Point(0,0,slope);
         returnVal.x = aX*pct*pct*pct + bX*pct*pct + cX*pct + a.x; //+ofRandom(-5,5);
         returnVal.y = aY*pct*pct*pct + bY*pct*pct + cY*pct + a.y;
-        p.text("a",aX,aY);
-        p.text("b",bX,bY);
-        p.text("c",cX,cY);
+        //p.text("a",aX,aY);
+        //p.text("b",bX,bY);
+        //p.text("c",cX,cY);
 
         return returnVal;
     }
@@ -80,6 +93,7 @@ public class Curve{
     }
 
    public  void draw(){
+       /*
         p.stroke(212);
         p.noFill();
         p.bezier(a.x,
@@ -99,7 +113,7 @@ public class Curve{
         b.draw();
         ca.draw();
         cb.draw();
-
+*/
        p.noStroke();
        if(isStopped){
            p.fill(212);
@@ -108,6 +122,6 @@ public class Curve{
        }
 
        p.noStroke();
-       p.ellipse(mid.x,mid.y,5,5);
+       p.ellipse(mid.x,mid.y,2,2);
     }
 }
